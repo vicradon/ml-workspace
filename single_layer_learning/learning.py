@@ -3,6 +3,8 @@ import numpy as np
 from gradient_descent.mse_function import mse
 
 # 1, 2, 0.5
+# 1 + 2x + 0.5x**2
+
 x1 = [ -5, -4, -3, -2, -1,  0,  1,  2,  3,  4]
 y1_actual = [ 3.5,  1. , -0.5, -1. , -0.5,  1. ,  3.5,  7. , 11.5, 17.]
 
@@ -18,6 +20,8 @@ class LinearApproxResult:
     param0: float
     param1: float
     param2: float
+    param3: float
+    param4: float
     learned_at_step: int
 
 class LinearApproximator:
@@ -35,6 +39,8 @@ class LinearApproximator:
         self.param0 = 0.0
         self.param1 = 0.0
         self.param2 = 0.0
+        self.param3 = 0.0
+        self.param4 = 0.0
     
     def compute_gradient(self):
         d0 = d1 = d2 = 0.0
@@ -42,7 +48,7 @@ class LinearApproximator:
 
         # summation in mse
         for i in range(self.n):
-            y_hat = self.param0 + self.param1*self.x[i] + self.param2*((self.x[i])**2)
+            y_hat = self.param0 + self.param1*self.x[i] + self.param2*((self.x[i])**2) 
             error = self.y_actual[i] - y_hat
 
             d0 += error
