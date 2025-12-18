@@ -1,6 +1,6 @@
 import numpy as np
 from matplotlib import pyplot as plt
-from utils import make_gif_from_plots, plot_state
+from utils import create_gif_from_plots, plot_state
 
 f_of_x = lambda x: x**2 - 5
 gradient_of_f = lambda x: 2*x
@@ -21,8 +21,8 @@ gradient_descent = lambda x: x - learning_rate * gradient_of_f(x)
 
 computed_pairs = []
 
-x_start = -3
-y_start = 4
+x_start = -4
+y_start = 16
 
 for i in range(iter_count):
     x_new = gradient_descent(x_start)
@@ -34,7 +34,6 @@ for i in range(iter_count):
         plot_state(
             label="f(x) = x^2 - 5",
             iteration=i,
-            skip_after=30,
             x_val=x_new,
             y_val=y_new,
             x_range=x_range,
@@ -51,4 +50,4 @@ print(computed_pairs[-3:])
 
 
 print("Found mininum after", len(computed_pairs), "iterations")
-make_gif_from_plots("plots")
+create_gif_from_plots(remove_files=True)
