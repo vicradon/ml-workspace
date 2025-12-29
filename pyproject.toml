@@ -9,6 +9,8 @@ dependencies = [
     "ipython>=9.8.0",
     "matplotlib>=3.10.7",
     "numpy>=2.3.5",
+    "pandas>=2.3.3",
     "scikit-learn>=1.7.2",
+    "sympy>=1.14.0",
     "torch>=2.9.1",
 ]
