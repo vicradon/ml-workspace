@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fox Word Predictor</title>
+    <link rel="stylesheet" href="public/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/onnxruntime-web/dist/ort.min.js"></script>
+</head>
+
+<body>
+    <div class="container">
+        <h1>Fox word predictor ONNX</h1>
+        <p>
+            Enter two words in the input box that follow sequentially in this phrase:
+            <br><br>
+            <code style="font-size: 1.5rem;">"the quick brown fox jumps over the lazy dog"</code>
+            <br><br>
+            You should get the next sequential word in the phrase.
+        </p>
+
+        <form id="prediction_form">
+            <input id="phrase_inputer" type="text" placeholder="e.g. quick brown" autocomplete="off" />
+            <button type="submit">Predict</button>
+        </form>
+        <div id="result">Waiting for input...</div>
+    </div>
+
+    <script>
+        const sentence = "The quick brown fox jumped over the lazy dog";
+
+        const unique_words = [...new Set(sentence.toLowerCase().split(' '))].sort();
+        const length = unique_words.length;
+        const word_to_index = Object.fromEntries(unique_words.map((word, i) => [word, i]));
+        const index_to_word = Object.fromEntries(unique_words.map((word, i) => [i, word]));
+
+
+
+        const vectors = unique_words.map((word, index) => {
+            const vector = new Array(length).fill(0);
+            vector[index] = 1;
+            return vector;
+        });
+
+        function getInputTensor(text) {
+            const words = text.toLowerCase().split(' ');
+            const input_vector = [];
+            for (const word of words) {
+                const idx = word_to_index[word];
+                input_vector.push(...vectors[idx]);
+            }
+            return new Float32Array(input_vector);
+        }
+
+        let ortSession;
+
+        async function loadModel() {
+            try {
+                ortSession = await ort.InferenceSession.create('public/fox_word_predictor.onnx');
+                console.log("Model loaded");
+            } catch (e) {
+                console.error("Failed to load model", e);
+                document.getElementById('result').textContent = "Error loading model. Check console.";
+            }
+        }
+
+        async function predict(phrase_input) {
+            if (!ortSession) {
+                await loadModel();
+            }
+            if (!phrase_input.trim()) return "Please enter text";
+
+            try {
+                const tensor_input = getInputTensor(phrase_input);
+
+                const inputTensor = new ort.Tensor('float32', tensor_input, [1, tensor_input.length]);
+                const feeds = { input: inputTensor };
+
+                const output = await ortSession.run(feeds);
+                const outputData = output[Object.keys(output)[0]].data;
+
+                const predicted_idx = outputData.indexOf(Math.max(...outputData));
+                return index_to_word[predicted_idx];
+            } catch (e) {
+                console.error(e);
+                return "Error predicting";
+            }
+        }
+
+        loadModel();
+
+        document.getElementById('prediction_form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const phrase = document.getElementById('phrase_inputer').value;
+
+            console.log(phrase)
+
+            if (!phrase) {
+                document.getElementById('result').textContent = "Please enter text";
+                return;
+            }
+
+            if (phrase.split(' ').length < 2) {
+                document.getElementById('result').textContent = "Please enter at least 2 words";
+                return;
+            }
+
+            const resultDiv = document.getElementById('result');
+            resultDiv.textContent = "Predicting...";
+            const result = await predict(phrase);
+            resultDiv.textContent = `Predicted: ${result}`;
+        });
+    </script>
+</body>
+
+</html>

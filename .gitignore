@@ -12,3 +12,4 @@ wheels/
 *.zip
 *.safetensors
 *.model
+*.onnx
