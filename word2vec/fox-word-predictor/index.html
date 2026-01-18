@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Fox Word Predictor</title>
+    <meta name="description" content="An ONNX demo for word prediction in the fox sentence">
     <link rel="stylesheet" href="public/style.css">
     <script src="https://cdn.jsdelivr.net/npm/onnxruntime-web/dist/ort.min.js"></script>
 </head>
@@ -15,7 +16,7 @@
         <p>
             Enter two words in the input box that follow sequentially in this phrase:
             <br><br>
-            <code style="font-size: 1.5rem;">"the quick brown fox jumps over the lazy dog"</code>
+            <code style="font-size: 1.5rem;">"the quick brown fox jumped over the lazy dog"</code>
             <br><br>
             You should get the next sequential word in the phrase.
         </p>
@@ -25,6 +26,11 @@
             <button type="submit">Predict</button>
         </form>
         <div id="result">Waiting for input...</div>
+
+        <div class="footer">
+            <a href="public/fox_word_predictor.onnx" download>Download Model</a>
+            <a href="https://netron.app" target="_blank" rel="noopener noreferrer">View Architecture</a>
+        </div>
     </div>
 
     <script>
@@ -70,6 +76,13 @@
                 await loadModel();
             }
             if (!phrase_input.trim()) return "Please enter text";
+
+            const words = phrase_input.toLowerCase().split(' ');
+            const unknownWords = words.filter(word => !unique_words.includes(word));
+
+            if (unknownWords.length > 0) {
+                return `Unknown word(s): "${unknownWords.join(', ')}". Please use words from the phrase.`;
+            }
 
             try {
                 const tensor_input = getInputTensor(phrase_input);
