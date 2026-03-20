@@ -13,3 +13,8 @@ wheels/
 *.safetensors
 *.model
 *.onnx
+
+images/
+annotations/
+shape_dataset*
+shapegen-*
