@@ -1,0 +1,6 @@
+--2026-02-05 15:33:47--  https://release-assets.githubusercontent.com/github-production-release-asset/156228018/66b47640-6598-4626-9ea0-99512a5a1a7a?sp=r
+Resolving release-assets.githubusercontent.com (release-assets.githubusercontent.com)... 185.199.109.133, 185.199.110.133, 185.199.111.133, ...
+Connecting to release-assets.githubusercontent.com (release-assets.githubusercontent.com)|185.199.109.133|:443... connected.
+HTTP request sent, awaiting response... 618 jwt:jwt-not-provided
+2026-02-05 15:33:47 ERROR 618: jwt:jwt-not-provided.
+
